@@ -97,6 +97,36 @@ p {
 	background: #003d4c;
 	text-decoration: underline;
 }
+#header .main-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#header .main-menu  ul, #header .main-menu li 
+{ 
+	display: inline; 
+}
+#header ul.main-menu   li a
+{
+	text-decoration: none;
+}
+
+#user-info{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#user-info  ul, #user-info li 
+{ 
+	display: inline; 
+}
+ #user-info li a
+{
+	text-decoration: none;
+}
+#user-info{
+	float: right;
+}
 #content{
 	background: #fff;
 	clear: both;

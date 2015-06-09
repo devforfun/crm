@@ -22,7 +22,6 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 <head>
 	<?php echo $this->Html->charset(); ?>
 	<title>
-		<?php echo $cakeDescription ?>:
 		<?php echo $this->fetch('title'); ?>
 	</title>
 	<?php
@@ -38,7 +37,20 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 <body>
 	<div id="container">
 		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
+			<?php if (AuthComponent::user('id')){ ?>
+			<ul class="main-menu">
+			<li><?php echo $this->Html->link(__('Contacts'), array('controller' => 'contacts','action' => 'index')); ?></li>
+			<li><?php echo $this->Html->link(__('Users'), array('controller' => 'users','action' => 'index')); ?></li>
+			</ul>
+			<?php } ?>
+			<ul id="user-info">
+			<?php if (AuthComponent::user('id')){ ?>
+			   <li>Logged in as <?php echo AuthComponent::user('username') ?></li>
+				<li><?php echo $this->Html->link(__('Logout'), array('controller' => 'users','action' => 'logout')); ?></li>
+			<?php }else{ ?>
+				<li><?php echo $this->Html->link(__('Login'), array('controller' => 'users','action' => 'login')); ?></li>
+			<?php }?>
+			</ul>
 		</div>
 		<div id="content">
 
@@ -54,7 +66,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 				);
 			?>
 			<p>
-				<?php echo $cakeVersion; ?>
+				
 			</p>
 		</div>
 	</div>
