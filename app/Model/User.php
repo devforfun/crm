@@ -16,7 +16,7 @@ class User extends AppModel {
  * @var array
  */
 	public $validate = array(
-		'login' => array(
+		'username' => array(
 			'notEmpty' => array(
 				'rule' => array('notEmpty'),
 				//'message' => 'Your custom message here',
@@ -48,7 +48,7 @@ class User extends AppModel {
 	            $this->data[$this->alias]['password']
 	        );
 	    }
-	    return true;
+		return parent::beforeSave();
 	}
 	
 
