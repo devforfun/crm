@@ -36,6 +36,7 @@ class User extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		'email' => 'email',
 	);
 
 

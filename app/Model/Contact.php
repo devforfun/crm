@@ -34,6 +34,25 @@ class Contact extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		'email'  => array(
+			'email' => array(
+				'rule' => array('email'),
+				//'message' => 'Your custom message here',
+				'allowEmpty' => true,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'number' => array(
+					        'rule' => 'phone',
+					        'regex' => null,
+					        'country' => 'us',
+					        'message' => 'Please supply a valid US Phone number. (xxx) xxx-xxxx'
+					    ),
+		// 'number' => array(
+  //       		'rule' => array('phone', null, 'us')
+  //   	),
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed

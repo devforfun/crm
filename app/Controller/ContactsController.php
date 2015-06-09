@@ -49,7 +49,21 @@ class ContactsController extends AppController {
 		if ($this->request->is('post')) {
 			$this->Contact->create();
 			if ($this->Contact->save($this->request->data)) {
+				
+				$phone['Phone']['number']=$this->request->data['Contact']['number'];
+				$phone['Phone']['contact_id']=$this->Contact->id;
+				
+				$this->Contact->Phone->create();
+				$this->Contact->Phone->save($phone);
+				
+				$email['Email']['email']=$this->request->data['Contact']['email'];
+				$email['Email']['contact_id']=$this->Contact->id;
+				
+
+				$this->Contact->Email->create();
+				$this->Contact->Email->save($email);
 				$this->Session->setFlash(__('The contact has been saved.'));
+
 				return $this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The contact could not be saved. Please, try again.'));

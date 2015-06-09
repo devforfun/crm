@@ -5,8 +5,13 @@
 	<?php
 		echo $this->Form->input('firstname');
 		echo $this->Form->input('lastname');
-		echo $this->Form->input('gender');
+		$options = array('M' => 'Male', 'F' => 'Female');
+		$attributes = array('legend' => false);
+		echo $this->Form->radio('gender', $options, $attributes);
 		echo $this->Form->input('birthdate');
+		echo $this->Form->input('number');
+		echo $this->Form->input('email');
+		
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
@@ -16,9 +21,5 @@
 	<ul>
 
 		<li><?php echo $this->Html->link(__('List Contacts'), array('action' => 'index')); ?></li>
-		<li><?php echo $this->Html->link(__('List Emails'), array('controller' => 'emails', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Email'), array('controller' => 'emails', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Phones'), array('controller' => 'phones', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Phone'), array('controller' => 'phones', 'action' => 'add')); ?> </li>
 	</ul>
 </div>

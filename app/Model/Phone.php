@@ -14,15 +14,11 @@ class Phone extends AppModel {
  */
 	public $validate = array(
 		'number' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
+					        'rule' => 'phone',
+					        'regex' => null,
+					        'country' => 'us',
+					        'message' => 'Please supply a valid US Phone number. (xxx) xxx-xxxx'
+					    ),
 		'contact_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),

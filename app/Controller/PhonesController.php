@@ -55,8 +55,8 @@ class PhonesController extends AppController {
 				$this->Session->setFlash(__('The phone could not be saved. Please, try again.'));
 			}
 		}
-		$users = $this->Phone->User->find('list');
-		$this->set(compact('users'));
+		$contacts = $this->Phone->Contact->find('list');
+		$this->set(compact('contacts'));
 	}
 
 /**
@@ -81,8 +81,8 @@ class PhonesController extends AppController {
 			$options = array('conditions' => array('Phone.' . $this->Phone->primaryKey => $id));
 			$this->request->data = $this->Phone->find('first', $options);
 		}
-		$users = $this->Phone->User->find('list');
-		$this->set(compact('users'));
+		$contacts = $this->Phone->Contact->find('list');
+		$this->set(compact('contacts'));
 	}
 
 /**

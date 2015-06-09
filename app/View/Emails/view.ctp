@@ -43,7 +43,7 @@
 		<th><?php echo __('Birthdate'); ?></th>
 		<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
-	<?php foreach ($email['Contact'] as $contact): ?>
+	<?php $contact=$email['Contact']; ?>
 		<tr>
 			<td><?php echo $contact['id']; ?></td>
 			<td><?php echo $contact['firstname']; ?></td>
@@ -56,7 +56,7 @@
 				<?php echo $this->Form->postLink(__('Delete'), array('controller' => 'contacts', 'action' => 'delete', $contact['id']), array(), __('Are you sure you want to delete # %s?', $contact['id'])); ?>
 			</td>
 		</tr>
-	<?php endforeach; ?>
+	<?php ?>
 	</table>
 <?php endif; ?>
 

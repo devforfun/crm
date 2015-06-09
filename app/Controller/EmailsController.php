@@ -55,8 +55,8 @@ class EmailsController extends AppController {
 				$this->Session->setFlash(__('The email could not be saved. Please, try again.'));
 			}
 		}
-		$users = $this->Email->User->find('list');
-		$this->set(compact('users'));
+		$contacts = $this->Email->Contact->find('list');
+		$this->set(compact('contacts'));
 	}
 
 /**
@@ -81,8 +81,8 @@ class EmailsController extends AppController {
 			$options = array('conditions' => array('Email.' . $this->Email->primaryKey => $id));
 			$this->request->data = $this->Email->find('first', $options);
 		}
-		$users = $this->Email->User->find('list');
-		$this->set(compact('users'));
+		$contacts = $this->Email->Contact->find('list');
+		$this->set(compact('contacs'));
 	}
 
 /**
