@@ -4,8 +4,8 @@
 	<thead>
 	<tr>
 			<th><?php echo $this->Paginator->sort('id'); ?></th>
-			<th><?php echo $this->Paginator->sort('first_name'); ?></th>
-			<th><?php echo $this->Paginator->sort('last_name'); ?></th>
+			<th><?php echo $this->Paginator->sort('firstname'); ?></th>
+			<th><?php echo $this->Paginator->sort('lastname'); ?></th>
 			<th><?php echo $this->Paginator->sort('gender'); ?></th>
 			<th><?php echo $this->Paginator->sort('birthdate'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -15,8 +15,8 @@
 	<?php foreach ($contacts as $contact): ?>
 	<tr>
 		<td><?php echo h($contact['Contact']['id']); ?>&nbsp;</td>
-		<td><?php echo h($contact['Contact']['first_name']); ?>&nbsp;</td>
-		<td><?php echo h($contact['Contact']['last_name']); ?>&nbsp;</td>
+		<td><?php echo h($contact['Contact']['firstname']); ?>&nbsp;</td>
+		<td><?php echo h($contact['Contact']['lastname']); ?>&nbsp;</td>
 		<td><?php echo h($contact['Contact']['gender']); ?>&nbsp;</td>
 		<td><?php echo h($contact['Contact']['birthdate']); ?>&nbsp;</td>
 		<td class="actions">

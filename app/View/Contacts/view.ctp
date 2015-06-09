@@ -8,12 +8,12 @@
 		</dd>
 		<dt><?php echo __('First Name'); ?></dt>
 		<dd>
-			<?php echo h($contact['Contact']['first_name']); ?>
+			<?php echo h($contact['Contact']['firstname']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Last Name'); ?></dt>
 		<dd>
-			<?php echo h($contact['Contact']['last_name']); ?>
+			<?php echo h($contact['Contact']['lastname']); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Gender'); ?></dt>

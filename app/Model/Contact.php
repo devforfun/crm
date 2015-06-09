@@ -14,7 +14,7 @@ class Contact extends AppModel {
  * @var array
  */
 	public $validate = array(
-		'first_name' => array(
+		'firstname' => array(
 			'notEmpty' => array(
 				'rule' => array('notEmpty'),
 				//'message' => 'Your custom message here',
@@ -24,7 +24,7 @@ class Contact extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
-		'last_name' => array(
+		'lastname' => array(
 			'notEmpty' => array(
 				'rule' => array('notEmpty'),
 				//'message' => 'Your custom message here',

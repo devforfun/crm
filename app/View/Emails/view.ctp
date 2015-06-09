@@ -46,8 +46,8 @@
 	<?php foreach ($email['Contact'] as $contact): ?>
 		<tr>
 			<td><?php echo $contact['id']; ?></td>
-			<td><?php echo $contact['first_name']; ?></td>
-			<td><?php echo $contact['last_name']; ?></td>
+			<td><?php echo $contact['firstname']; ?></td>
+			<td><?php echo $contact['lastname']; ?></td>
 			<td><?php echo $contact['gender']; ?></td>
 			<td><?php echo $contact['birthdate']; ?></td>
 			<td class="actions">
