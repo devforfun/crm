@@ -1,5 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
+App::import('Vendor','Classes/PHPExcel');
 /**
  * Contacts Controller
  *
@@ -8,6 +9,7 @@ App::uses('AppController', 'Controller');
  */
 class ContactsController extends AppController {
 
+	private $time="";
 /**
  * Components
  *
@@ -15,6 +17,9 @@ class ContactsController extends AppController {
  */
 	public $components = array('Paginator');
 
+	public function beforeFilter() {
+		$this->time=microtime();
+	}
 /**
  * index method
  *
@@ -115,4 +120,99 @@ class ContactsController extends AppController {
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
+		public function import(){
+			
+			if ($this->request->is('post')) {
+				if($this->uploadFile()){
+					$this->parseUpload();
+				}
+			}		
+		}
+		private function uploadFile() {
+			  $file = $this->request->data['Upload']['file'];
+			  if ($file['error'] === UPLOAD_ERR_OK) {
+			    $id = String::uuid();
+			    if (move_uploaded_file($file['tmp_name'], APP.DS.'webroot'.DS.'uploads'.DS.$file['name'])) {
+			      $this->request->data['Upload']['user_id'] = $this->Auth->user('id');
+			      $this->request->data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'uploads'.DS.$file['name'];
+			      $this->request->data['Upload']['file']['extension'] = pathinfo($file['name'], PATHINFO_EXTENSION);
+			      $this->request->data['Upload']['time'] =  round(($this->time), 4);
+			      return true;
+			    }
+			  }
+			  return false;
+		}
+		private function parseUpload() {
+
+					if($this->request->data['Upload']['file']['extension']=='csv')
+				    {
+				        $objPHPExcel = PHPExcel_IOFactory::createReader('CSV')
+				            ->setDelimiter(';')
+				            ->setEnclosure('"')
+				            ->setLineEnding("\n")
+				            ->setSheetIndex(0)
+				            ->load($this->request->data['Upload']['file']['path']); 
+				    } elseif ($this->request->data['Upload']['file']['extension']=='tsv') {
+				    	$objPHPExcel = PHPExcel_IOFactory::createReader('CSV')
+				            ->setDelimiter('	')
+				            ->setEnclosure('"')
+				            ->setLineEnding("\n")
+				            ->setSheetIndex(0)
+				            ->load($this->request->data['Upload']['file']['path']); 
+				    }
+				    else
+				    {
+				        $objPHPExcel = PHPExcel_IOFactory::load($this->request->data['Upload']['file']['path']);
+				    }
+					foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+					    $worksheetTitle     = $worksheet->getTitle();
+					    $highestRow         = $worksheet->getHighestRow(); // e.g. 10
+					    $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+					    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+					    $nrColumns = ord($highestColumn) - 64;
+
+					    echo "<br>The file ".$this->request->data['Upload']['file']['name']." has been uploaded in ".$this->request->data['Upload']['time']." seconds worksheet ".$worksheetTitle." has ";
+					    echo $nrColumns . ' columns (A-' . $highestColumn . ') ';
+					    echo ' and ' . $highestRow . ' row.';
+					    echo '<br>Data: <table border="1"><tr>';
+					    for ($row = 1; $row <= $highestRow; ++ $row) {
+				        	
+				        	if($this->request->data['Upload']['header_row'] and $row==1)
+			        			continue;
+	
+					        echo '<tr>';
+					        $dataCell['Contact']['firstname']=$worksheet->getCellByColumnAndRow(0, $row)->getValue();
+					        $dataCell['Contact']['lastname']=$worksheet->getCellByColumnAndRow(1, $row)->getValue();
+					        $dataCell['Contact']['gender']=$worksheet->getCellByColumnAndRow(4, $row)->getValue();
+					        $cellDate = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+					        $dataCell['Contact']['birthdate']=date('Y-m-d',PHPExcel_Shared_Date::ExcelToPHP($cellDate));
+					        
+					        $this->Contact->set($dataCell);
+					        
+					        if($this->Contact->validates())
+					        {    echo '<td>Valid</td>';
+					    		$this->Contact->save();
+					        }else{
+					            echo '<td>Unvalid</td>';
+					        }
+
+					        for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+					            $cell = $worksheet->getCellByColumnAndRow($col, $row);
+					            if(PHPExcel_Shared_Date::isDateTime($cell)){
+                                            $cellValue = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
+                                            $dateValue = PHPExcel_Shared_Date::ExcelToPHP($cellValue);                       
+                                            $val  =  date('Y-m-d',$dateValue);                            
+
+                                }else{
+						            $val = $cell->getFormattedValue();
+
+                                } 
+					            $dataType = PHPExcel_Cell_DataType::dataTypeForValue($val);
+					            echo '<td>' . $val . '<br>(Typ ' . $dataType . ')</td>';
+					        }
+					        echo '</tr>';
+					    }
+					    echo '</table>';
+					}
+		}
 }
