@@ -56,6 +56,7 @@ class ContactsController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Contact->create();
+			
 			if ($this->Contact->save($this->request->data)) {
 				
 				$phone['Phone']['number']=$this->request->data['Contact']['number'];
@@ -102,6 +103,7 @@ class ContactsController extends AppController {
 			}
 		} else {
 			$options = array('conditions' => array('Contact.' . $this->Contact->primaryKey => $id));
+		$this->set('contact', $this->Contact->find('first', $options));
 			$this->request->data = $this->Contact->find('first', $options);
 		}
 	}
