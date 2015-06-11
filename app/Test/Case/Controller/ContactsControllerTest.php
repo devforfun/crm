@@ -39,6 +39,28 @@ class ContactsControllerTest extends ControllerTestCase {
 									'gender' => 'M',
 									'birthdate' => '2015-06-08',
 									'user_id' => '1'
+								),
+								'Email' => array(
+									(int) 0 => array(
+										'id' => '1',
+										'email' => 'test@test.com',
+										'contact_id' => '1'
+									)
+								),
+								'Phone' => array(
+									(int) 0 => array(
+										'id' => '1',
+										'number' => '(541) 754-3010',
+										'contact_id' => '1'
+									)
+								),
+								'User' => array(
+									'id' => '1',
+									'firstname' => 'Test Name',
+									'lastname' => 'Test LastName',
+									'username' => 'user',
+									'password' => '$2a$10$F12aJWR49FFfgiwfmrlopeOWkujiO0P/l1uxvXV6ZAyUzgms7XNZ6',
+									'email' => 'email@email.com'
 								)
 							)
 							)
@@ -79,11 +101,19 @@ class ContactsControllerTest extends ControllerTestCase {
 									'number' => '(541) 754-3010',
 									'contact_id' => '1'
 								)
-							)
+							),
+							'User' => array(
+									'id' => '1',
+									'firstname' => 'Test Name',
+									'lastname' => 'Test LastName',
+									'username' => 'user',
+									'password' => '$2a$10$F12aJWR49FFfgiwfmrlopeOWkujiO0P/l1uxvXV6ZAyUzgms7XNZ6',
+									'email' => 'email@email.com'
+								)
 						)
 					);
          $this->assertEqual($result,$expected);
-        
+
 
 	}
 
@@ -103,7 +133,7 @@ class ContactsControllerTest extends ControllerTestCase {
                 'birthdate' => array("day" => '10'),
                 'birthdate' => array("year" => '2015'),
                 'number' => '(541) 754-3010',
-                'email' => 'email@email.com'
+                'email' => 'email@email.com',
             )
         );
         $result = $this->testAction(
@@ -156,6 +186,130 @@ class ContactsControllerTest extends ControllerTestCase {
         );
 
         $this->assertEqual($result['result'],true);
+	}
+
+/**
+ * testProcessUploadXLSX method
+ *
+ * @return void
+ */
+	public function testProcessUploadXLSX() {
+		
+		$data['Upload']['user_id'] = 1;
+	      $data['Upload']['file']['name'] = "format_contact.xlsx";
+	      $data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'tests'.DS."format_contact.xlsx";
+	      $data['Upload']['file']['extension'] = "xlsx";
+	      $data['Upload']['header_row'] = 1;
+	      $data['Upload']['time'] =  round((microtime()), 4);
+
+		$result = $this->testAction(
+            '/contacts/processUpload',
+            array('data' => $data, 'method' => 'post','return' => 'result')
+        );
+        $this->assertEqual($result['result'],true);
+	}
+
+/**
+ * testProcessUploadXLS method
+ *
+ * @return void
+ */
+	public function testProcessUploadXLS() {
+		
+		$data['Upload']['user_id'] = 1;
+	      $data['Upload']['file']['name'] = "format_contact.xls";
+	      $data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'tests'.DS."format_contact.xls";
+	      $data['Upload']['file']['extension'] = "xls";
+	      $data['Upload']['header_row'] = 1;
+	      $data['Upload']['time'] =  round((microtime()), 4);
+
+		$result = $this->testAction(
+            '/contacts/processUpload',
+            array('data' => $data, 'method' => 'post','return' => 'result')
+        );
+        $this->assertEqual($result['result'],true);
+	}
+
+/**
+ * testProcessUploadCSV method
+ *
+ * @return void
+ */
+	public function testProcessUploadCSV() {
+		
+		$data['Upload']['user_id'] = 1;
+	      $data['Upload']['file']['name'] = "format_contact.csv";
+	      $data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'tests'.DS."format_contact.csv";
+	      $data['Upload']['file']['extension'] = "csv";
+	      $data['Upload']['header_row'] = 1;
+	      $data['Upload']['time'] =  round((microtime()), 4);
+
+		$result = $this->testAction(
+            '/contacts/processUpload',
+            array('data' => $data, 'method' => 'post','return' => 'result')
+        );
+        $this->assertEqual($result['result'],true);
+	}
+/**
+ * testProcessUploadCSV method
+ *
+ * @return void
+ */
+	public function testProcessUploadTSV() {
+		
+		$data['Upload']['user_id'] = 1;
+	      $data['Upload']['file']['name'] = "format_contact.tsv";
+	      $data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'tests'.DS."format_contact.tsv";
+	      $data['Upload']['file']['extension'] = "tsv";
+	      $data['Upload']['header_row'] = 1;
+	      $data['Upload']['time'] =  round((microtime()), 4);
+
+		$result = $this->testAction(
+            '/contacts/processUpload',
+            array('data' => $data, 'method' => 'post','return' => 'result')
+        );
+        $this->assertEqual($result['result'],true);
+	}
+/**
+ * testProcessUploadLessInfo method
+ *
+ * @return void
+ */
+	public function testProcessUploadLessInfo() {
+		
+		$data['Upload']['user_id'] = 1;
+	      $data['Upload']['file']['name'] = "less_info_contact.xlsx";
+	      $data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'tests'.DS."less_info_contact.xlsx";
+	      $data['Upload']['file']['extension'] = "xlsx";
+	      $data['Upload']['header_row'] = 1;
+	      $data['Upload']['time'] =  round((microtime()), 4);
+
+		$result = $this->testAction(
+            '/contacts/processUpload',
+            array('data' => $data, 'method' => 'post','return' => 'result')
+        );
+        $this->assertEqual($result['result'],false);
+	}
+
+/**
+ * testProcessUploadBadInfo method
+ *
+ * @return void
+ */
+	public function testProcessUploadBadInfo() {
+		
+		$data['Upload']['user_id'] = 1;
+	      $data['Upload']['file']['name'] = "bad_info_contact.xlsx";
+	      $data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'tests'.DS."bad_info_contact.xlsx";
+	      $data['Upload']['file']['extension'] = "xlsx";
+	      $data['Upload']['header_row'] = 1;
+	      $data['Upload']['time'] =  round((microtime()), 4);
+
+		$result = $this->testAction(
+            '/contacts/processUpload',
+            array('data' => $data, 'method' => 'post','return' => 'result')
+        );
+        $this->assertEqual($result['result'],false);
 	}
 
 }

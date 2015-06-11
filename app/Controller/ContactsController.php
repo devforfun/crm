@@ -55,7 +55,10 @@ class ContactsController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Contact->create();
-			$this->request->data['Contact']['user_id']=$this->Auth->user('id');
+	
+			if(!isset($this->request->data['Contact']['user_id']))
+				$this->request->data['Contact']['user_id']=$this->Auth->user('id');
+	
 			if ($this->Contact->save($this->request->data)) {
 				
 				$phone['Phone']['number']=$this->request->data['Contact']['number'];
@@ -179,7 +182,7 @@ class ContactsController extends AppController {
  * @return void
  */
 
-	private function processUpload() {
+	public function processUpload() {
 
 		if($this->request->data['Upload']['file']['extension']=='csv')
 	    {
