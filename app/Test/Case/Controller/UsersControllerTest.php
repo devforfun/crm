@@ -157,7 +157,13 @@ class UsersControllerTest extends ControllerTestCase {
             array('data' => $data, 'method' => 'post','return' => 'vars')
         );
 		 
+        $this->testAction(
+            '/users/logout', array('method' => 'get')
+        );
+
         $this->assertEqual($result['result'],true);
+        
+
 	}
 
 }
