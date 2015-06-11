@@ -41,6 +41,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 			<ul class="main-menu">
 			<li><?php echo $this->Html->link(__('Contacts'), array('controller' => 'contacts','action' => 'index')); ?></li>
 			<li><?php echo $this->Html->link(__('Users'), array('controller' => 'users','action' => 'index')); ?></li>
+			<li><?php echo $this->Html->link(__('Logs'), array('controller' => 'logs','action' => 'index')); ?></li>
 			</ul>
 			<?php } ?>
 			<ul id="user-info">
