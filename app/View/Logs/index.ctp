@@ -12,7 +12,7 @@
 	<?php foreach ($logs as $log): ?>
 	<tr>
 		<td><?php echo h($log['Log']['id']); ?>&nbsp;</td>
-		<td><?php echo h($log['Log']['description']); ?>&nbsp;</td>
+		<td><?php echo ($log['Log']['description']); ?>&nbsp;</td>
 		<td><?php echo h($log['User']['username']); ?>&nbsp;</td>
 		
 	</tr>

@@ -29,7 +29,6 @@ class ContactsController extends AppController {
  * @return void
  */
 	public function index() {
-		$this->Contact->recursive = 0;
 		$this->set('contacts', $this->Paginator->paginate());
 	}
 
@@ -56,7 +55,7 @@ class ContactsController extends AppController {
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Contact->create();
-			
+			$this->request->data['Contact']['user_id']=$this->Auth->user('id');
 			if ($this->Contact->save($this->request->data)) {
 				
 				$phone['Phone']['number']=$this->request->data['Contact']['number'];

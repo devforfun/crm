@@ -8,6 +8,7 @@
 			<th><?php echo $this->Paginator->sort('lastname'); ?></th>
 			<th><?php echo $this->Paginator->sort('gender'); ?></th>
 			<th><?php echo $this->Paginator->sort('birthdate'); ?></th>
+			<th><?php echo $this->Paginator->sort('username'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	</thead>
@@ -19,6 +20,7 @@
 		<td><?php echo h($contact['Contact']['lastname']); ?>&nbsp;</td>
 		<td><?php echo h($contact['Contact']['gender']); ?>&nbsp;</td>
 		<td><?php echo h($contact['Contact']['birthdate']); ?>&nbsp;</td>
+		<td><?php echo h($contact['User']['username']); ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('View'), array('action' => 'view', $contact['Contact']['id'])); ?>
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $contact['Contact']['id'])); ?>
