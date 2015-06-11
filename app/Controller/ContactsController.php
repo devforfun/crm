@@ -68,6 +68,8 @@ class ContactsController extends AppController {
 				$this->Contact->Email->create();
 				$this->Contact->Email->save($email);
 				$this->Session->setFlash(__('The contact has been saved.'));
+		
+				$this->set('result', true);
 
 				return $this->redirect(array('action' => 'index'));
 			} else {
@@ -90,6 +92,7 @@ class ContactsController extends AppController {
 		if ($this->request->is(array('post', 'put'))) {
 			if ($this->Contact->save($this->request->data)) {
 				$this->Session->setFlash(__('The contact has been saved.'));
+				$this->set('result', true);
 				return $this->redirect(array('action' => 'index'));
 			} else {
 				$this->Session->setFlash(__('The contact could not be saved. Please, try again.'));
@@ -118,6 +121,7 @@ class ContactsController extends AppController {
 		} else {
 			$this->Session->setFlash(__('The contact could not be deleted. Please, try again.'));
 		}
+		$this->set('result', true);
 		return $this->redirect(array('action' => 'index'));
 	}
 		public function import(){
