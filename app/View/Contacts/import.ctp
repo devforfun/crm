@@ -1,3 +1,13 @@
+<?php
+if(isset($result)){
+	if($result==true)
+		echo "<h2>Succes</h2>";
+	else
+		echo "<h2>Error</h2>";
+
+echo "$msg";
+}  
+?>
 <h2>Contact</h2>
 <?php 
 echo $this->Form->create('Upload', array('type'=>'file'));
