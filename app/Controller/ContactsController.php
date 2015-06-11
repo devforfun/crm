@@ -10,6 +10,9 @@ App::import('Vendor','Classes/PHPExcel');
 class ContactsController extends AppController {
 
 	private $time="";
+
+	var $uses = array('Contact','Log');
+
 /**
  * Components
  *
@@ -124,99 +127,157 @@ class ContactsController extends AppController {
 		$this->set('result', true);
 		return $this->redirect(array('action' => 'index'));
 	}
-		public function import(){
-			
-			if ($this->request->is('post')) {
-				if($this->uploadFile()){
-					$this->parseUpload();
-				}
-			}		
+
+/**
+ * import method
+ *
+ * @return void
+ */
+
+	public function import(){
+		
+		if ($this->request->is('post')) {
+			if($this->uploadFile()){
+				$result=$this->processUpload();
+				$datalog["Log"]=array("description"=>$result['msg'],"user_id"=>$this->Auth->user('id') );
+				
+				$this->Log->save($datalog);
+				$this->set('result', $result['result']);
+				$this->set('msg', $result['msg']);
+
+			}
+		}else{
+
+		}		
+	}
+
+/**
+ * uploadFile method
+ *
+ * @return void
+ */
+
+	private function uploadFile() {
+		  $file = $this->request->data['Upload']['file'];
+		  if ($file['error'] === UPLOAD_ERR_OK) {
+		    $id = String::uuid();
+		    if (move_uploaded_file($file['tmp_name'], APP.DS.'webroot'.DS.'uploads'.DS.$file['name'])) {
+		      $this->request->data['Upload']['user_id'] = $this->Auth->user('id');
+		      $this->request->data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'uploads'.DS.$file['name'];
+		      $this->request->data['Upload']['file']['extension'] = pathinfo($file['name'], PATHINFO_EXTENSION);
+		      $this->request->data['Upload']['time'] =  round(($this->time), 4);
+		      return true;
+		    }
+		  }
+		  return false;
+	}
+
+/**
+ * processUpload method
+ *
+ * @return void
+ */
+
+	private function processUpload() {
+
+		if($this->request->data['Upload']['file']['extension']=='csv')
+	    {
+	        $objPHPExcel = PHPExcel_IOFactory::createReader('CSV')
+	            ->setDelimiter(';')
+	            ->setEnclosure('"')
+	            ->setLineEnding("\n")
+	            ->setSheetIndex(0)
+	            ->load($this->request->data['Upload']['file']['path']); 
+	    } elseif ($this->request->data['Upload']['file']['extension']=='tsv') {
+	    	$objPHPExcel = PHPExcel_IOFactory::createReader('CSV')
+	            ->setDelimiter('	')
+	            ->setEnclosure('"')
+	            ->setLineEnding("\n")
+	            ->setSheetIndex(0)
+	            ->load($this->request->data['Upload']['file']['path']); 
+	    } else {
+	        $objPHPExcel = PHPExcel_IOFactory::load($this->request->data['Upload']['file']['path']);
+	    }
+
+		foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+
+		    $highestRow         = $worksheet->getHighestRow(); // e.g. 10
+		    $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+		    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+		   
+		    $nrColumns = ord($highestColumn) - 64;
+
+		    $nrUsers=$highestRow;
+
+	       	if($this->request->data['Upload']['header_row'])
+	       		$nrUsers--;
+
+	       	if($nrUsers<=0){
+	       		$result['result']=false;
+	       		$result['msg']="There is no records in the file";
+	       		return $result;
+	       	}
+		    
+
+	       	if($nrColumns<3){
+	       		$result['result']=false;
+	       		$result['msg']="Contact data is missing, the required contact information is first name, last name and phone number, there is only $nrColumns data columns";
+	       		return $result;
+	       	}
+
+
+		    for ($row = 1; $row <= $highestRow; ++ $row) {
+	        	
+	        	if($this->request->data['Upload']['header_row'] and $row==1)
+        			continue;
+
+		        $dataCell['Contact']['firstname']=$worksheet->getCellByColumnAndRow(0, $row)->getValue();
+		        $dataCell['Contact']['lastname']=$worksheet->getCellByColumnAndRow(1, $row)->getValue();
+
+		        $array_numbers=explode(',',$worksheet->getCellByColumnAndRow(2, $row)->getValue());
+		        $numbers=array();
+		        foreach($array_numbers as $number){
+		        	$numbers[]=array('number'=>$number);
+		        }
+		        $dataCell['Phone']=$numbers;
+
+		        $array_emails=explode(',',$worksheet->getCellByColumnAndRow(3, $row)->getValue());
+		        $emails=array();
+		        foreach($array_emails as $email){
+		        	$emails[]=array('email'=>$email);
+		        }
+
+		        $dataCell['Email']=$emails;
+		        $dataCell['Contact']['gender']=$worksheet->getCellByColumnAndRow(4, $row)->getValue();
+		        $dataCell['Contact']['user_id']=$this->request->data['Upload']['user_id'];
+		        
+		        $cellDate = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+		        $dataCell['Contact']['birthdate']=date('Y-m-d',PHPExcel_Shared_Date::ExcelToPHP($cellDate));
+		        
+		        $this->Contact->set($dataCell);
+		        
+
+
+		        if($this->Contact->saveAll($dataCell, array('validate' => 'only')))				    
+		        {   
+		        	$validRecords[]=$dataCell;
+
+		        }else{
+		       		$result['result']=false;
+		    		$result['msg'] = "<p>The file <strong>".$this->request->data['Upload']['file']['name']."</strong> has been uploaded in ".$this->request->data['Upload']['time']." seconds at ".date("F j, Y, g:i a")." by the user: <strong> ".AuthComponent::user('username')."</strong> with ".count(array_keys($this->Contact->invalidFields()))." errors. </p>";
+		       		$result['msg'].="<p>These fields are invalid : <strong>".implode(", ",array_keys($this->Contact->invalidFields())). "</strong> on the row number $row</p>";
+
+	       			return $result;
+
+		        }
+
+		    }
 		}
-		private function uploadFile() {
-			  $file = $this->request->data['Upload']['file'];
-			  if ($file['error'] === UPLOAD_ERR_OK) {
-			    $id = String::uuid();
-			    if (move_uploaded_file($file['tmp_name'], APP.DS.'webroot'.DS.'uploads'.DS.$file['name'])) {
-			      $this->request->data['Upload']['user_id'] = $this->Auth->user('id');
-			      $this->request->data['Upload']['file']['path'] = APP.DS.'webroot'.DS.'uploads'.DS.$file['name'];
-			      $this->request->data['Upload']['file']['extension'] = pathinfo($file['name'], PATHINFO_EXTENSION);
-			      $this->request->data['Upload']['time'] =  round(($this->time), 4);
-			      return true;
-			    }
-			  }
-			  return false;
-		}
-		private function parseUpload() {
-
-					if($this->request->data['Upload']['file']['extension']=='csv')
-				    {
-				        $objPHPExcel = PHPExcel_IOFactory::createReader('CSV')
-				            ->setDelimiter(';')
-				            ->setEnclosure('"')
-				            ->setLineEnding("\n")
-				            ->setSheetIndex(0)
-				            ->load($this->request->data['Upload']['file']['path']); 
-				    } elseif ($this->request->data['Upload']['file']['extension']=='tsv') {
-				    	$objPHPExcel = PHPExcel_IOFactory::createReader('CSV')
-				            ->setDelimiter('	')
-				            ->setEnclosure('"')
-				            ->setLineEnding("\n")
-				            ->setSheetIndex(0)
-				            ->load($this->request->data['Upload']['file']['path']); 
-				    }
-				    else
-				    {
-				        $objPHPExcel = PHPExcel_IOFactory::load($this->request->data['Upload']['file']['path']);
-				    }
-					foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-					    $worksheetTitle     = $worksheet->getTitle();
-					    $highestRow         = $worksheet->getHighestRow(); // e.g. 10
-					    $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
-					    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-					    $nrColumns = ord($highestColumn) - 64;
-
-					    echo "<br>The file ".$this->request->data['Upload']['file']['name']." has been uploaded in ".$this->request->data['Upload']['time']." seconds worksheet ".$worksheetTitle." has ";
-					    echo $nrColumns . ' columns (A-' . $highestColumn . ') ';
-					    echo ' and ' . $highestRow . ' row.';
-					    echo '<br>Data: <table border="1"><tr>';
-					    for ($row = 1; $row <= $highestRow; ++ $row) {
-				        	
-				        	if($this->request->data['Upload']['header_row'] and $row==1)
-			        			continue;
-	
-					        echo '<tr>';
-					        $dataCell['Contact']['firstname']=$worksheet->getCellByColumnAndRow(0, $row)->getValue();
-					        $dataCell['Contact']['lastname']=$worksheet->getCellByColumnAndRow(1, $row)->getValue();
-					        $dataCell['Contact']['gender']=$worksheet->getCellByColumnAndRow(4, $row)->getValue();
-					        $cellDate = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
-					        $dataCell['Contact']['birthdate']=date('Y-m-d',PHPExcel_Shared_Date::ExcelToPHP($cellDate));
-					        
-					        $this->Contact->set($dataCell);
-					        
-					        if($this->Contact->validates())
-					        {    echo '<td>Valid</td>';
-					    		$this->Contact->save();
-					        }else{
-					            echo '<td>Unvalid</td>';
-					        }
-
-					        for ($col = 0; $col < $highestColumnIndex; ++ $col) {
-					            $cell = $worksheet->getCellByColumnAndRow($col, $row);
-					            if(PHPExcel_Shared_Date::isDateTime($cell)){
-                                            $cellValue = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
-                                            $dateValue = PHPExcel_Shared_Date::ExcelToPHP($cellValue);                       
-                                            $val  =  date('Y-m-d',$dateValue);                            
-
-                                }else{
-						            $val = $cell->getFormattedValue();
-
-                                } 
-					            $dataType = PHPExcel_Cell_DataType::dataTypeForValue($val);
-					            echo '<td>' . $val . '<br>(Typ ' . $dataType . ')</td>';
-					        }
-					        echo '</tr>';
-					    }
-					    echo '</table>';
-					}
-		}
+			$this->Contact->saveAll($validRecords,array('deep' => true));
+	       	$result['result']=true;
+		    $result['msg'] = "<p>The file <strong>".$this->request->data['Upload']['file']['name']."</strong> has been imported in ".$this->request->data['Upload']['time']." seconds at ".date("F j, Y, g:i a")." by the user <strong> ".AuthComponent::user('username')."</strong> with 0 errors. </p>";
+		    $result['msg'].= "<p>The file has ". $nrColumns . ' data columns and ' . $nrUsers . ' contacts were imported.</p>';
+		   
+		    return $result;
+	}
 }
