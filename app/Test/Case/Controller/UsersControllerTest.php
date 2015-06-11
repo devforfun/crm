@@ -24,9 +24,27 @@ class UsersControllerTest extends ControllerTestCase {
  *
  * @return void
  */
-	public function testIndex() {
-		$this->markTestIncomplete('testIndex not implemented.');
-	}
+	
+    public function testIndex() {
+        $result = $this->testAction(
+            '/users/index/',
+            array('return' => 'vars')
+        );
+        $expected =array('users' => array(
+							0 => array(
+								'User' => array(
+									'id' => '1',
+									'firstname' => 'Test Name',
+									'lastname' => 'Test LastName',
+									'username' => 'user',
+									'password' => '$2a$10$F12aJWR49FFfgiwfmrlopeOWkujiO0P/l1uxvXV6ZAyUzgms7XNZ6',
+									'email' => 'email@email.com'
+								)
+							)
+							)
+						);
+         $this->assertEqual($result,$expected);
+    }
 
 /**
  * testView method
@@ -34,7 +52,25 @@ class UsersControllerTest extends ControllerTestCase {
  * @return void
  */
 	public function testView() {
-		$this->markTestIncomplete('testView not implemented.');
+		$result = $this->testAction(
+            '/users/view/1',
+            array('return' => 'vars')
+        );
+        $expected=array(
+						'user' => array(
+							'User' => array(
+								'id' => '1',
+								'firstname' => 'Test Name',
+								'lastname' => 'Test LastName',
+								'username' => 'user',
+								'password' => '$2a$10$F12aJWR49FFfgiwfmrlopeOWkujiO0P/l1uxvXV6ZAyUzgms7XNZ6',
+								'email' => 'email@email.com'
+							)
+						)
+					);
+         $this->assertEqual($result,$expected);
+        
+
 	}
 
 /**
@@ -43,7 +79,22 @@ class UsersControllerTest extends ControllerTestCase {
  * @return void
  */
 	public function testAdd() {
-		$this->markTestIncomplete('testAdd not implemented.');
+		$data = array(
+            			'User' => array(
+								'id' => '1',
+								'firstname' => 'Test Name',
+								'lastname' => 'Test LastName',
+								'username' => 'user',
+								'password' => 'user',
+								'email' => 'email@email.com'
+						)
+        );
+        $result = $this->testAction(
+            '/users/add',
+            array('data' => $data, 'method' => 'post','return' => 'vars')
+        );
+         $this->assertEqual($result['result'],true);
+
 	}
 
 /**
@@ -51,9 +102,26 @@ class UsersControllerTest extends ControllerTestCase {
  *
  * @return void
  */
-	public function testEdit() {
-		$this->markTestIncomplete('testEdit not implemented.');
+		public function testEdit() {
+		$data = array(
+            			'User' => array(
+								'id' => '1',
+								'firstname' => 'Test Name',
+								'lastname' => 'Test LastName',
+								'username' => 'user',
+								'password' => 'user',
+								'email' => 'email@email.com'
+						)
+        );
+        $result = $this->testAction(
+            '/users/edit/1',
+            array('data' => $data, 'method' => 'put','return' => 'vars')
+        );
+         $this->assertEqual($result['result'],true);
+
+
 	}
+
 
 /**
  * testDelete method
@@ -61,7 +129,35 @@ class UsersControllerTest extends ControllerTestCase {
  * @return void
  */
 	public function testDelete() {
-		$this->markTestIncomplete('testDelete not implemented.');
+		$result = $this->testAction(
+            '/users/delete/1',
+            array('method' => 'delete','return' => 'vars')
+        );
+
+        $this->assertEqual($result['result'],true);
+	}
+
+/**
+ * testLogin method
+ *
+ * @return void
+ */
+
+	public function testLogin() {
+
+		$data = array(
+			            'User' => array(
+			                			'username' => 'user',
+										'password' => 'user'
+			            				)
+			        	);
+
+        $result = $this->testAction(
+            '/users/login',
+            array('data' => $data, 'method' => 'post','return' => 'vars')
+        );
+		 
+        $this->assertEqual($result['result'],true);
 	}
 
 }
