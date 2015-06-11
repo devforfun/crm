@@ -12,8 +12,8 @@ class PhoneFixture extends CakeTestFixture {
  */
 	public $fields = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => true, 'key' => 'primary'),
-		'number' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 20, 'unsigned' => false),
-		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+		'number' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 50, 'unsigned' => false),
+		'contact_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
@@ -28,8 +28,8 @@ class PhoneFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'number' => 1,
-			'user_id' => 1
+			'number' => "(541) 754-3010",
+			'contact_id' => 1
 		),
 	);
 

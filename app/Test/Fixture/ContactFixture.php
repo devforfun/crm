@@ -16,8 +16,7 @@ class ContactFixture extends CakeTestFixture {
 		'lastname' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'gender' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 10, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'birthdate' => array('type' => 'date', 'null' => true, 'default' => null),
-		'phone_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
-		'mail_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'unsigned' => true),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
@@ -32,12 +31,11 @@ class ContactFixture extends CakeTestFixture {
 	public $records = array(
 		array(
 			'id' => 1,
-			'firstname' => 'Lorem ipsum dolor sit amet',
-			'lastname' => 'Lorem ipsum dolor sit amet',
-			'gender' => 'Lorem ip',
+			'firstname' => 'Test Name',
+			'lastname' => 'Test LastName',
+			'gender' => 'M',
 			'birthdate' => '2015-06-08',
-			'phone_id' => 1,
-			'mail_id' => 1
+			'user_id' => '1',
 		),
 	);
 
